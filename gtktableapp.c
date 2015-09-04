@@ -6,6 +6,28 @@ typedef struct {
     GtkWidget *value1, *value2, *value3, *value4;
 } entrygrouped;
 
+/* Entry value getter guint variables, the guint variable are the int form of
+GTK */
+guint ival1, ival2, ival3, ival4;
+
+/* When clicked events generated in the gtk_main event the statement
+g_signal_connect calls the callback with arguments specified. */
+void button_clicked (entrygrouped *widget)
+{
+    const gchar *cvalue1, *cvalue2, *cvalue3, *cvalue4;
+    cvalue1 = gtk_entry_get_text (GTK_ENTRY(widget->value1));
+    cvalue2 = gtk_entry_get_text (GTK_ENTRY(widget->value2));
+    cvalue3 = gtk_entry_get_text (GTK_ENTRY(widget->value3));
+    cvalue4 = gtk_entry_get_text (GTK_ENTRY(widget->value4));
+
+    ival1 = (guint)atoi(cvalue1);
+    ival2 = (guint)atoi(cvalue2);
+    ival3 = (guint)atoi(cvalue3);
+    ival4 = (guint)atoi(cvalue4);
+
+    g_print("ENTRY VALUES = %s %s %s %s\n", cvalue1, cvalue2, cvalue3, cvalue4);
+    g_print("ENTRY NUMS = %d %d %d %d\n", ival1, ival2, ival3, ival4);
+}
 int main (int argc, char *args[])
 {
     /* Declare the Gtkwidget window to show main window*/
@@ -56,8 +78,13 @@ int main (int argc, char *args[])
     gtk_box_pack_start (GTK_BOX(vbox), uptable, 0, 0, 0);
     gtk_box_pack_start (GTK_BOX(vbox), downtable, 0, 0, 0);
 
-    /* This is function sends the exit signal to the program when Close [X]
-    button is pressed. */
+    /* The program flow go to the callback function when click event happens
+    on specified button widget. */
+    g_signal_connect(G_OBJECT(button), "clicked",
+                            G_CALLBACK(button_clicked), eg);
+
+    /* This is callback function which sends the exit signal to the program when
+    Close [X] button is pressed. */
     g_signal_connect_swapped(G_OBJECT(window), "destroy",
                                 G_CALLBACK(gtk_main_quit), NULL);
 
