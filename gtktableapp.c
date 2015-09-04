@@ -1,11 +1,15 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
+/* Created structure of GtkWidgets or custom widget at global scope so any
+function in the program can access the widgets */
+typedef struct {
+    GtkWidget *value1, *value2, *value3, *value4;
+} entrygrouped;
 
 int main (int argc, char *args[])
 {
     /* Declare the Gtkwidget window to show main window*/
     GtkWidget *window, *uptable, *downtable, *button, *button2, *vbox;
-    GtkWidget *value1, *value2, *value3, *value4;
 
     /*This below statement initializes all stuff needed to GTK and can parse
     command line arguments for the GTK application. */
@@ -19,24 +23,31 @@ int main (int argc, char *args[])
     gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
     gtk_window_set_title (GTK_WINDOW(window), "TABLEAPP");
 
+    /* These following statement create a pointer of structure instance, the
+    memory allocation of structure instance to the structure pointer is needed.
+    Which is done by the following statement. */
+    entrygrouped *eg;
+    eg = g_slice_new(entrygrouped);
+
     /* Initialization of tables */
     uptable = gtk_table_new (3, 3, FALSE);
     downtable = gtk_table_new (3, 3, FALSE);
-    button = gtk_button_new_with_label("Submit");  // Button with label
-    vbox = gtk_vbox_new(FALSE, 2);          // GTK vbox
+    button = gtk_button_new_with_label("Submit");   // Button with label
+    button2 = gtk_button_new_with_label("Button");  // Button with label
+    vbox = gtk_vbox_new(FALSE, 2);                  // GTK vbox
 
     /* initialization of text entries */
-    value1 = gtk_entry_new();
-    value2 = gtk_entry_new();
-    value3 = gtk_entry_new();
-    value4 = gtk_entry_new();
+    eg->value1 = gtk_entry_new();
+    eg->value2 = gtk_entry_new();
+    eg->value3 = gtk_entry_new();
+    eg->value4 = gtk_entry_new();
 
     /* These functions below attaches widgets to table with value according
     left, right, top and bottom values. */
-    gtk_table_attach_defaults (GTK_TABLE(uptable), value1, 0, 1, 0, 1);
-    gtk_table_attach_defaults (GTK_TABLE(uptable), value2, 1, 2, 0, 1);
-    gtk_table_attach_defaults (GTK_TABLE(uptable), value3, 0, 1, 1, 2);
-    gtk_table_attach_defaults (GTK_TABLE(uptable), value4, 1, 2, 1, 2);
+    gtk_table_attach_defaults (GTK_TABLE(uptable), eg->value1, 0, 1, 0, 1);
+    gtk_table_attach_defaults (GTK_TABLE(uptable), eg->value2, 1, 2, 0, 1);
+    gtk_table_attach_defaults (GTK_TABLE(uptable), eg->value3, 0, 1, 1, 2);
+    gtk_table_attach_defaults (GTK_TABLE(uptable), eg->value4, 1, 2, 1, 2);
     gtk_table_attach_defaults (GTK_TABLE(uptable), button, 1, 2, 2, 3);
 
     /* This below function packs both table into a vertical box alignment, this
