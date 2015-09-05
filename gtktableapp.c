@@ -12,7 +12,7 @@ guint ival1, ival2, ival3, ival4;
 
 /* When clicked events generated in the gtk_main event the statement
 g_signal_connect calls the callback with arguments specified. */
-void button_clicked (entrygrouped *widget)
+void button_clicked (gpointer data, entrygrouped *widget)
 {
     const gchar *cvalue1, *cvalue2, *cvalue3, *cvalue4;
     cvalue1 = gtk_entry_get_text (GTK_ENTRY(widget->value1));
@@ -28,10 +28,17 @@ void button_clicked (entrygrouped *widget)
     g_print("ENTRY VALUES = %s %s %s %s\n", cvalue1, cvalue2, cvalue3, cvalue4);
     g_print("ENTRY NUMS = %d %d %d %d\n", ival1, ival2, ival3, ival4);
 }
+void window_it (GtkWidget *widget)
+{
+    int pecv = gtk_events_pending();
+    g_print("PENDING EVENT CHECKER = %d\n", pecv);
+    while (gtk_events_pending())
+           gtk_main_iteration();
+}
 int main (int argc, char *args[])
 {
     /* Declare the Gtkwidget window to show main window*/
-    GtkWidget *window, *uptable, *downtable, *button, *button2, *vbox;
+    GtkWidget *window, *uptable, *downtable, *button, *button2, *vbox, *instr;
 
     /*This below statement initializes all stuff needed to GTK and can parse
     command line arguments for the GTK application. */
@@ -51,8 +58,10 @@ int main (int argc, char *args[])
     entrygrouped *eg;
     eg = g_slice_new(entrygrouped);
 
+    /* Initialization of label to instruct the purpose of the application */
+    instr = gtk_label_new (" Enter the values to position the widget ");
     /* Initialization of tables */
-    uptable = gtk_table_new (3, 3, FALSE);
+    uptable = gtk_table_new (3, 4, FALSE);
     downtable = gtk_table_new (3, 3, FALSE);
     button = gtk_button_new_with_label("Submit");   // Button with label
     button2 = gtk_button_new_with_label("Button");  // Button with label
@@ -66,11 +75,14 @@ int main (int argc, char *args[])
 
     /* These functions below attaches widgets to table with value according
     left, right, top and bottom values. */
-    gtk_table_attach_defaults (GTK_TABLE(uptable), eg->value1, 0, 1, 0, 1);
-    gtk_table_attach_defaults (GTK_TABLE(uptable), eg->value2, 1, 2, 0, 1);
-    gtk_table_attach_defaults (GTK_TABLE(uptable), eg->value3, 0, 1, 1, 2);
-    gtk_table_attach_defaults (GTK_TABLE(uptable), eg->value4, 1, 2, 1, 2);
-    gtk_table_attach_defaults (GTK_TABLE(uptable), button, 1, 2, 2, 3);
+    gtk_table_attach_defaults (GTK_TABLE(uptable), instr, 0, 3, 0, 1);
+    gtk_table_attach_defaults (GTK_TABLE(uptable), eg->value1, 0, 1, 1, 2);
+    gtk_table_attach_defaults (GTK_TABLE(uptable), eg->value2, 1, 2, 1, 2);
+    gtk_table_attach_defaults (GTK_TABLE(uptable), eg->value3, 0, 1, 2, 3);
+    gtk_table_attach_defaults (GTK_TABLE(uptable), eg->value4, 1, 2, 2, 3);
+    gtk_table_attach_defaults (GTK_TABLE(uptable), button, 1, 2, 3, 4);
+    //gtk_table_attach_defaults (GTK_TABLE(downtable), button2, ival1, ival2,
+      //                                      ival3, ival4);
 
     /* This below function packs both table into a vertical box alignment, this
     method is used because GTK window can have only one container which is added
@@ -82,6 +94,9 @@ int main (int argc, char *args[])
     on specified button widget. */
     g_signal_connect(G_OBJECT(button), "clicked",
                             G_CALLBACK(button_clicked), eg);
+
+    g_signal_connect(G_OBJECT(button), "clicked",
+                            G_CALLBACK(window_it), window);
 
     /* This is callback function which sends the exit signal to the program when
     Close [X] button is pressed. */
