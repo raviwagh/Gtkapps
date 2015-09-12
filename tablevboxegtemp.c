@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
+gboolean buttonbool = FALSE;
+
 /* Created structure of GtkWidgets or custom widget at global scope so any
 function in the program can access the widgets */
 typedef struct {
@@ -27,14 +29,16 @@ void button_clicked (gpointer data, entrygrouped *widget)
 
     g_print("ENTRY VALUES = %s %s %s %s\n", cvalue1, cvalue2, cvalue3, cvalue4);
     g_print("ENTRY NUMS = %d %d %d %d\n", ival1, ival2, ival3, ival4);
+    buttonbool = TRUE;
 }
-void window_it (GtkWidget *widget)
+
+/* This function prints the allocation of the widget */
+void printalloc (GtkWidget *widget, GtkAllocation *alloc)
 {
-    int pecv = gtk_events_pending();
-    g_print("PENDING EVENT CHECKER = %d\n", pecv);
-    while (gtk_events_pending())
-           gtk_main_iteration();
+        g_print ("Height = %d, Width = %d\n", alloc->height, alloc->width);
+        g_print ("X = %d, Y = %d\n", alloc->x, alloc->y);
 }
+
 int main (int argc, char *args[])
 {
     /* Declare the Gtkwidget window to show main window*/
@@ -64,7 +68,8 @@ int main (int argc, char *args[])
     uptable = gtk_table_new (3, 4, FALSE);
     downtable = gtk_table_new (3, 3, FALSE);
     button = gtk_button_new_with_label("Submit");   // Button with label
-    button2 = gtk_button_new_with_label("Button");  // Button with label
+    button2 = gtk_button_new_with_label("Button packed with 0,1,0,1");
+                                                    // Button with label
     vbox = gtk_vbox_new(FALSE, 2);                  // GTK vbox
 
     /* initialization of text entries */
@@ -81,9 +86,13 @@ int main (int argc, char *args[])
     gtk_table_attach_defaults (GTK_TABLE(uptable), eg->value3, 0, 1, 2, 3);
     gtk_table_attach_defaults (GTK_TABLE(uptable), eg->value4, 1, 2, 2, 3);
     gtk_table_attach_defaults (GTK_TABLE(uptable), button, 1, 2, 3, 4);
-    //gtk_table_attach_defaults (GTK_TABLE(downtable), button2, ival1, ival2,
-      //                                      ival3, ival4);
 
+//    if (drawset == TRUE)
+//    {
+//        gtk_widget_reparent(GTK_WIDGET(downtable), window);
+        gtk_table_attach_defaults (GTK_TABLE(downtable), button2, ival1, ival2,
+                                            ival3, ival4);
+//    }
     /* This below function packs both table into a vertical box alignment, this
     method is used because GTK window can have only one container which is added
     later in this program. The packing is done from start. */
@@ -94,9 +103,10 @@ int main (int argc, char *args[])
     on specified button widget. */
     g_signal_connect(G_OBJECT(button), "clicked",
                             G_CALLBACK(button_clicked), eg);
-
-    g_signal_connect(G_OBJECT(button), "clicked",
-                            G_CALLBACK(window_it), window);
+    /*Callback function with sie-request signal to print the size of the widget
+    */
+    g_signal_connect(G_OBJECT(eg->value2), "size-request",
+                                        G_CALLBACK(printalloc), NULL);
 
     /* This is callback function which sends the exit signal to the program when
     Close [X] button is pressed. */
@@ -108,6 +118,7 @@ int main (int argc, char *args[])
 
     /* Function to show the widget. */
     gtk_widget_show_all(window);
+    //gtk_widget_show(button2);
 
     /* This below function runs GTK main loop until the gtk_main_quit() is
     called. */
