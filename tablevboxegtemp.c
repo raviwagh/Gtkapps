@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
-//gboolean buttonbool = FALSE;
+gboolean buttonbool = FALSE;
 
 /* Created structure of GtkWidgets or custom widget at global scope so any
 function in the program can access the widgets */
@@ -34,13 +34,24 @@ void button_clicked (gpointer data, entrygrouped *widget)
 /* Function to attach new button to widget as per the values entered */
 void showid(gpointer data, GtkWidget *widget)
 {
-    button2 = gtk_button_new_with_label("SAME");
+    if (buttonbool == TRUE)
+    {
+        /* Here reference count of the widget is decreased by 1. */
+        gtk_container_remove(GTK_CONTAINER(widget), GTK_WIDGET(button2));
 
-    gtk_table_attach_defaults (GTK_TABLE(widget), button2, ival1, ival2,
+        /* In below statement reference count of widget increased by 1 */
+        g_object_ref(button2);
+        button2 = gtk_button_new_with_label("SAME");
+
+        gtk_table_attach_defaults (GTK_TABLE(widget), button2, ival1, ival2,
                                                             ival3, ival4);
+    } else {
+        gtk_table_attach_defaults (GTK_TABLE(widget), button2, ival1, ival2,
+                                                            ival3, ival4);
+        buttonbool = TRUE;
+    }
 
     gtk_widget_show(button2);
-
 }
 /* This function prints the allocation of the widget */
 void printalloc (GtkWidget *widget, GtkAllocation *alloc)
@@ -75,10 +86,10 @@ int main (int argc, char *args[])
     /* Initialization of label to instruct the purpose of the application */
     instr = gtk_label_new (" Enter the values to position the widget ");
     /* Initialization of tables */
-    uptable = gtk_table_new (3, 4, TRUE);
+    uptable = gtk_table_new (2, 4, FALSE);
     downtable = gtk_table_new (3, 3, TRUE);
     button = gtk_button_new_with_label("Submit");   // Button with label
-    button2 = gtk_button_new_with_label("Button packed with 0,1,0,1");
+    button2 = gtk_button_new_with_label("SAME");
                                                     // Button with label
     vbox = gtk_vbox_new(FALSE, 2);                  // GTK vbox
 
@@ -113,6 +124,7 @@ int main (int argc, char *args[])
     g_signal_connect(G_OBJECT(button), "clicked",
                             G_CALLBACK(button_clicked), eg);
 
+    /*This function attaches the widget as per the values are entered. */
     g_signal_connect(G_OBJECT(button), "clicked",
                             G_CALLBACK(showid), downtable);
     /*Callback function with size-request signal to print the size of the widget
