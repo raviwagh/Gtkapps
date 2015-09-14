@@ -86,9 +86,14 @@ int main (int argc, char *args[])
 
     /* This below function packs both table into a vertical box alignment, this
     method is used because GTK window can have only one container which is added
-    later in this program. The packing is done from start. */
-    gtk_box_pack_start (GTK_BOX(vbox), uptable, 0, 0, 0);
-    gtk_box_pack_start (GTK_BOX(vbox), downtable, 0, 0, 0);
+    later in this program. The packing is done from start. Here the function
+    arguments as follows, First argument is the Box widget to where the widgets
+    are going to be packed, the second is widget which is going to be packed
+    into the box, the third arguments is about expand properties to the child,
+    fourth is about allocation properties towards the child, the last is gint
+    the padding values regarding to child and its neighbors. */
+    gtk_box_pack_start (GTK_BOX(vbox), uptable, TRUE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX(vbox), downtable, TRUE, TRUE, 0);
 
     /* The program flow go to the callback function when click event happens
     on specified button widget. */

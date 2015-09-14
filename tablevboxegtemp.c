@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
-gboolean buttonbool = FALSE;
+//gboolean buttonbool = FALSE;
 
 /* Created structure of GtkWidgets or custom widget at global scope so any
 function in the program can access the widgets */
@@ -8,6 +8,7 @@ typedef struct {
     GtkWidget *value1, *value2, *value3, *value4;
 } entrygrouped;
 
+GtkWidget *button2;
 /* Entry value getter guint variables, the guint variable are the int form of
 GTK */
 guint ival1, ival2, ival3, ival4;
@@ -29,20 +30,29 @@ void button_clicked (gpointer data, entrygrouped *widget)
 
     g_print("ENTRY VALUES = %s %s %s %s\n", cvalue1, cvalue2, cvalue3, cvalue4);
     g_print("ENTRY NUMS = %d %d %d %d\n", ival1, ival2, ival3, ival4);
-    buttonbool = TRUE;
 }
+/* Function to attach new button to widget as per the values entered */
+void showid(gpointer data, GtkWidget *widget)
+{
+    button2 = gtk_button_new_with_label("SAME");
 
+    gtk_table_attach_defaults (GTK_TABLE(widget), button2, ival1, ival2,
+                                                            ival3, ival4);
+
+    gtk_widget_show(button2);
+
+}
 /* This function prints the allocation of the widget */
 void printalloc (GtkWidget *widget, GtkAllocation *alloc)
 {
-        g_print ("Height = %d, Width = %d\n", alloc->height, alloc->width);
-        g_print ("X = %d, Y = %d\n", alloc->x, alloc->y);
+    g_print ("Height = %d, Width = %d\n", alloc->height, alloc->width);
+    g_print ("X = %d, Y = %d\n", alloc->x, alloc->y);
 }
 
 int main (int argc, char *args[])
 {
     /* Declare the Gtkwidget window to show main window*/
-    GtkWidget *window, *uptable, *downtable, *button, *button2, *vbox, *instr;
+    GtkWidget *window, *uptable, *downtable, *button, *vbox, *instr;
 
     /*This below statement initializes all stuff needed to GTK and can parse
     command line arguments for the GTK application. */
@@ -65,8 +75,8 @@ int main (int argc, char *args[])
     /* Initialization of label to instruct the purpose of the application */
     instr = gtk_label_new (" Enter the values to position the widget ");
     /* Initialization of tables */
-    uptable = gtk_table_new (3, 4, FALSE);
-    downtable = gtk_table_new (3, 3, FALSE);
+    uptable = gtk_table_new (3, 4, TRUE);
+    downtable = gtk_table_new (3, 3, TRUE);
     button = gtk_button_new_with_label("Submit");   // Button with label
     button2 = gtk_button_new_with_label("Button packed with 0,1,0,1");
                                                     // Button with label
@@ -87,23 +97,25 @@ int main (int argc, char *args[])
     gtk_table_attach_defaults (GTK_TABLE(uptable), eg->value4, 1, 2, 2, 3);
     gtk_table_attach_defaults (GTK_TABLE(uptable), button, 1, 2, 3, 4);
 
-//    if (drawset == TRUE)
-//    {
-//        gtk_widget_reparent(GTK_WIDGET(downtable), window);
-        gtk_table_attach_defaults (GTK_TABLE(downtable), button2, ival1, ival2,
-                                            ival3, ival4);
-//    }
     /* This below function packs both table into a vertical box alignment, this
     method is used because GTK window can have only one container which is added
-    later in this program. The packing is done from start. */
-    gtk_box_pack_start (GTK_BOX(vbox), uptable, 0, 0, 0);
-    gtk_box_pack_start (GTK_BOX(vbox), downtable, 0, 0, 0);
+    later in this program. The packing is done from start. Here the function
+    arguments are as follows First argument is the Box widget to where the
+    widgets are going to be packed, the second is widget which is going to be
+    packed into the box, the third arguments is about expand properties to the
+    child, fourth is about allocation properties towards the child, the last is
+    gint the padding values regarding to child and its neighbors. */
+    gtk_box_pack_start (GTK_BOX(vbox), uptable, TRUE, TRUE, 0);
+    gtk_box_pack_start (GTK_BOX(vbox), downtable, TRUE, TRUE, 0);
 
     /* The program flow go to the callback function when click event happens
     on specified button widget. */
     g_signal_connect(G_OBJECT(button), "clicked",
                             G_CALLBACK(button_clicked), eg);
-    /*Callback function with sie-request signal to print the size of the widget
+
+    g_signal_connect(G_OBJECT(button), "clicked",
+                            G_CALLBACK(showid), downtable);
+    /*Callback function with size-request signal to print the size of the widget
     */
     g_signal_connect(G_OBJECT(eg->value2), "size-request",
                                         G_CALLBACK(printalloc), NULL);
