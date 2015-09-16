@@ -108,6 +108,7 @@ int main (int argc, char *args[])
     gtk_table_attach_defaults (GTK_TABLE(uptable), eg->value4, 1, 2, 2, 3);
     gtk_table_attach_defaults (GTK_TABLE(uptable), button, 1, 2, 3, 4);
 
+    gtk_widget_set_size_request(GTK_WIDGET(downtable), 300, 100);
     /* This below function packs both table into a vertical box alignment, this
     method is used because GTK window can have only one container which is added
     later in this program. The packing is done from start. Here the function

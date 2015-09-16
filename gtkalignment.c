@@ -79,10 +79,11 @@ int main (int argc, char *args[])
     gtk_table_attach_defaults (GTK_TABLE(uptable), eg->value4, 1, 2, 2, 3);
     gtk_table_attach_defaults (GTK_TABLE(uptable), button, 1, 2, 3, 4);
 
+    gtk_widget_set_size_request(GTK_WIDGET(align), 300, 200);
     /* The second arguments gtk_box_pack_start(); is about expand properties of
     widget which was set 0 and third is about allocation fill properties is also
     set 0 in my previous program. */
-    gtk_box_set_homogeneous (GTK_BOX(vbox), TRUE);
+    //gtk_box_set_homogeneous (GTK_BOX(vbox), TRUE);
     gtk_box_pack_start (GTK_BOX(vbox), uptable, TRUE, TRUE, 0);
     gtk_box_pack_start (GTK_BOX(vbox), align, TRUE, TRUE, 0);
 
